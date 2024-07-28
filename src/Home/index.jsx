@@ -1,6 +1,7 @@
 import Header from "@/components/ui/custom/Header";
 import { AtomIcon, Edit, Share2 } from "lucide-react";
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
@@ -19,8 +20,8 @@ function Home() {
               Effortlessly Craft a Standout Resume with Our AI-Powered Builder
             </p>
             <div className="flex flex-col mb-8 lg:mb-2 space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
-              <a
-                href="/dashboard"
+              <Link to={'/dashboard'}
+               
                 className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-primary hover:bg-primary focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
               >
                 Get Started
@@ -36,7 +37,7 @@ function Home() {
                     clip-rule="evenodd"
                   ></path>
                 </svg>
-              </a>
+              </Link>
             </div>
             
 
