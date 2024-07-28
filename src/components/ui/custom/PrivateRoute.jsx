@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useJwt } from 'react-jwt';
+import { decodeToken, isExpired, useJwt } from 'react-jwt';
 import { Route, Navigate, useLocation } from 'react-router-dom';
 
 
+
 const verifyToken = async (token) => {
-    const { decodedToken, isExpired } = useJwt(token);
-    console.log(decodedToken,isExpired)
-    if(decodedToken&&!isExpired){
+  const myDecodedToken = decodeToken(token);
+  const isMyTokenExpired = isExpired(token);
+    
+   
+    if(myDecodedToken&&!isMyTokenExpired){
         return true
     }
     else{
