@@ -11,7 +11,6 @@ axiosClient.interceptors.request.use(
     config => {
         
         const token = localStorage.getItem('token'); // Get token from localStorage
-        console.log(token)
         if (token) {
             config.headers['Authorization'] = `${token}`; // Add token to headers
         }
@@ -26,7 +25,7 @@ const CreateNewResume=(data)=>axiosClient.post('/resume',data);
 
 const GetUserResumes=()=>axiosClient.get('/resume');
 
-const UpdateResumeDetail=(id,data)=>axiosClient.patch('resume/'+id,data)
+const UpdateResumeDetail=(id,data)=>axiosClient.patch('/resume/'+id,data)
 
 const GetResumeById=(id)=>axiosClient.get('/resume/'+id)
 

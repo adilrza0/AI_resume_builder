@@ -1,34 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { decodeToken, isExpired, useJwt } from 'react-jwt';
-import { Route, Navigate, useLocation } from 'react-router-dom';
+import { decodeToken, isExpired } from 'react-jwt';
+import { Navigate, useLocation } from 'react-router-dom';
 
-
-
-const verifyToken = async (token) => {
-  const myDecodedToken = decodeToken(token);
-  const isMyTokenExpired = isExpired(token);
-    
-   
-    if(myDecodedToken&&!isMyTokenExpired){
-        return true
-    }
-    else{
-        return false
-    }
-  
+const verifyToken = (token) => {
+  try {
+    const myDecodedToken = decodeToken(token);
+    const isMyTokenExpired = isExpired(token);
+    return Boolean(myDecodedToken) && !isMyTokenExpired;
+  } catch {
+    return false;
+  }
 };
 
-const PrivateRoute = ({ element, ...rest }) => {
+const PrivateRoute = ({ element }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-
   const location = useLocation();
 
   useEffect(() => {
-    const checkAuthentication = async () => {
+    const checkAuthentication = () => {
       const token = localStorage.getItem('token');
       if (token) {
-        console.log(token)
-        const isValid =  verifyToken(token);
+        const isValid = verifyToken(token);
         setIsAuthenticated(isValid);
       } else {
         setIsAuthenticated(false);
@@ -42,7 +34,11 @@ const PrivateRoute = ({ element, ...rest }) => {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? element : <Navigate to="/auth/sign-in" state={{ from: location.pathname }} replace  />;
+  const fromFullPath = `${location.pathname}${location.search || ''}${location.hash || ''}`;
+
+  return isAuthenticated ? element : (
+    <Navigate to="/auth/sign-in" state={{ from: fromFullPath }} replace />
+  );
 };
 
 export default PrivateRoute;

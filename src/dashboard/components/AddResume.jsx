@@ -40,7 +40,7 @@ export default function AddResume() {
     <div>
       <div
         className="p-14 py-24 items-center flex justify-center bg-secondary
-         rounded-lg mt-10 h-[280px] hover:scale-1105 transition-all hover:shadow-md 
+         rounded-lg mt-10 h-[280px] hover:scale-105 transition-all hover:shadow-md 
          cursor-pointer border-dashed"
         onClick={() => setDialog(true)}
       >

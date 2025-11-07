@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import GlobalApi from './../../../../../service/GlobalApi';
 import { Brain, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { AIChatSession } from './../../../../../service/AIModal';
+import { isAIConfigured, sendMessageWithHandling } from './../../../../../service/AIModal';
 
 const prompt="Job Title: {jobTitle} , Depends on job title give me list of  summery for 3 experience level, Mid Level and Freasher level in 3 -4 lines in array format, With summery and experience_level Field in JSON Format"
 function Summery({enabledNext}) {
@@ -23,14 +23,23 @@ function Summery({enabledNext}) {
     },[summery])
 
     const GenerateSummeryFromAI=async()=>{
+        if (!isAIConfigured) {
+            toast('AI is not configured. Set VITE_GOOGLE_AI_API_KEY in your .env.');
+            return;
+        }
         setLoading(true)
         const PROMPT=prompt.replace('{jobTitle}',resumeInfo?.jobTitle);
-        console.log(PROMPT);
-        const result=await AIChatSession.sendMessage(PROMPT);
-        console.log(JSON.parse(result.response.text()))
-       
-        setAiGenerateSummeryList(JSON.parse(result.response.text()))
-        setLoading(false);
+        try {
+            const result = await sendMessageWithHandling(PROMPT);
+            setAiGenerateSummeryList(JSON.parse(result.response.text()))
+        } catch (e) {
+            const msg = typeof e?.message === 'string' && e.message.includes('429')
+              ? 'AI rate limit exceeded. Please wait and try again, or use your own API key.'
+              : (e.code === 'AI_NOT_CONFIGURED' ? 'AI is not configured. Set VITE_GOOGLE_AI_API_KEY in your .env.' : 'Failed to generate summary. Please try again.');
+            toast(msg);
+        } finally {
+            setLoading(false);
+        }
     }
 
     const onSave=(e)=>{
@@ -61,8 +70,7 @@ function Summery({enabledNext}) {
                 <Brain className='h-4 w-4' />  Generate from AI</Button>
             </div>
             <Textarea className="mt-5" required
-            value={summery}
-                defaultValue={summery?summery:resumeInfo?.summery}
+            value={summery ?? resumeInfo?.summery ?? ''}
             onChange={(e)=>setSummery(e.target.value)}
             />
             <div className='mt-2 flex justify-end'>

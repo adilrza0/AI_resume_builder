@@ -16,7 +16,7 @@ import GlobalApi from '../../../service/GlobalApi.js'
 
 
 export default function SingInPage() {
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(Boolean(useLocation().state?.from));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
